@@ -10,5 +10,7 @@ before_script:
 
 build:
  script:
-  - docker build . -t registry.gitlab.com/mistrikoff/flatata:latest
+  - docker pull registry.gitlab.com/mistrikoff/flatata:latest
+  - docker build . -t registry.gitlab.com/mistrikoff/flatata:$CI_COMMIT_SHORT_SHA -t registry.gitlab.com/mistrikoff/flatata:latest --cache-from registry.gitlab.com/mistrikoff/flatata:latest
   - docker push registry.gitlab.com/mistrikoff/flatata:latest
+  - docker push registry.gitlab.com/mistrikoff/flatata:$CI_COMMIT_SHORT_SHA
