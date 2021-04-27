@@ -1,7 +1,12 @@
 image: docker
 
+
 services:
  - docker:dind
+
+before_script:
+ - export 
+ - docker login https://registry.gitlab.com/ -u mistrikoff@gmail.com -p Kolokol!2
 
 build:
  script:
