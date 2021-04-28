@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: flatata-deployment
+ labels:
+  app: flatris
+spec:
+ replicas: 1
+ selector:
+  matchLabels:
+   app: flatris
+ template:
+  metadata:
+   labels:
+    app: flatris
+  spec:
+   containers:
+   - name: flatris-deployment-container
+     image: registry.gitlab.com/mistrikoff/flatata:latest
