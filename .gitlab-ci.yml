@@ -7,9 +7,21 @@ services:
 before_script:
  - docker login https://registry.gitlab.com/ -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
 
+stages:
+ - build
+ - test
+
 build:
+ stage: build
  script:
-  - docker pull registry.gitlab.com/mistrikoff/flatata:latest || true
-  - docker build . -t registry.gitlab.com/mistrikoff/flatata:$CI_COMMIT_SHORT_SHA -t registry.gitlab.com/mistrikoff/flatata:latest --cache-from registry.gitlab.com/mistrikoff/flatata:latest
-  - docker push registry.gitlab.com/mistrikoff/flatata:latest
-  - docker push registry.gitlab.com/mistrikoff/flatata:$CI_COMMIT_SHORT_SHA
+  - docker pull $CI_REGISTRY_IMAGE:latest || true
+  - docker build . -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t registry.gitlab.com/mistrikoff/flatata:latest --cache-from registry.gitlab.com/mistrikoff/flatata:latest
+  - docker push $CI_REGISTRY_IMAGE:latest
+  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+test:
+ stage: test
+ script:
+  - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA yarn test
+
