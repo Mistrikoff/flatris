@@ -15,7 +15,9 @@ build:
  stage: build
  script:
   - docker pull $CI_REGISTRY_IMAGE:latest || true
-  - docker build . -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t registry.gitlab.com/mistrikoff/flatata:latest --cache-from registry.gitlab.com/mistrikoff/flatata:latest
+  - docker build . -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest --cache-from $CI_REGISTRY_IMAGE:latest
+  - docker run $CI_REGISTRY_IMAGE:latest sed "s/latest_version/$CI_COMMIT_SHORT_SHA/" flatata-deployment.yaml
+  - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA sed "s/latest_version/$CI_COMMIT_SHORT_SHA/" flatata-deployment.yaml
   - docker push $CI_REGISTRY_IMAGE:latest
   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
 
