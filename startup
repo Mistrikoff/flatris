@@ -1,0 +1,7 @@
+#! /bin/bash
+
+kubectl apply -f flatata-deployment.yaml
+delay(2000)
+kubectl apply -f flatata-deployment-service.yaml
+delay(2000)
+kubectl get svc
