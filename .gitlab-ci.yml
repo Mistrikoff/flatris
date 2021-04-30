@@ -6,6 +6,7 @@ services:
 
 before_script:
  - docker login https://registry.gitlab.com/ -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+ - VERS = $(cat version)
 
 stages:
  - build
@@ -14,22 +15,16 @@ stages:
 build:
  stage: build
  script:
-  - sed -i.bak "s/flatata:[0-9a-zA-Z_]*/flatata:$CI_COMMIT_SHORT_SHA /" flatata-deployment.yaml
-  - rm flatata-deployment.yaml.bak
-  - git status
-  - git add .
-  - git commit -m "deploy $CI_COMMIT_SHORT_SHA"
-  - git push
   - docker pull $CI_REGISTRY_IMAGE:latest || true
-  - docker build . -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest --cache-from $CI_REGISTRY_IMAGE:latest
-  - docker run $CI_REGISTRY_IMAGE:latest sed "s/latest_version/$CI_COMMIT_SHORT_SHA/" flatata-deployment.yaml
-  - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA sed "s/latest_version/$CI_COMMIT_SHORT_SHA/" flatata-deployment.yaml
+  - docker build . -t $CI_REGISTRY_IMAGE:$VERS -t $CI_REGISTRY_IMAGE:latest --cache-from $CI_REGISTRY_IMAGE:latest
+  - docker run $CI_REGISTRY_IMAGE:latest sed "s/latest_version/$VERS/" flatata-deployment.yaml
+  - docker run $CI_REGISTRY_IMAGE:$VERS sed "s/latest_version/$VERS/" flatata-deployment.yaml
   - docker push $CI_REGISTRY_IMAGE:latest
-  - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  - docker push $CI_REGISTRY_IMAGE:$VERS
 
 test:
  stage: test
  script:
-  - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-  - docker run $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA yarn test
+  - docker pull $CI_REGISTRY_IMAGE:$VERS
+  - docker run $CI_REGISTRY_IMAGE:$VERS yarn test
 

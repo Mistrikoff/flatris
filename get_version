@@ -1,0 +1,8 @@
+#! /bin/bash
+
+VERS=$(awk -F_ -v OFS=_ '{++$NF;print}' version)
+sed -i.bak "s/flatata:[0-9a-zA-Z_]*/flatata:$VERS /" flatata-deployment.yaml; rm flatata-deployment.yaml.bak
+echo $VERS > version
+ls -la flatata*
+cat flatata-deployment.yaml
+git add .
