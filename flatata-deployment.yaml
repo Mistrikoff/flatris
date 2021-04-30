@@ -16,4 +16,4 @@ spec:
   spec:
    containers:
    - name: flatris-deployment-container
-     image: registry.gitlab.com/mistrikoff/flatata:  
+     image: registry.gitlab.com/mistrikoff/flatata:latest  

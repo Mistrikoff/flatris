@@ -16,6 +16,10 @@ build:
  script:
   - sed -i.bak "s/flatata:[0-9a-zA-Z_]*/flatata:$CI_COMMIT_SHORT_SHA /" flatata-deployment.yaml
   - rm flatata-deployment.yaml.bak
+  - git status
+  - git add .
+  - git commit -m "deploy $CI_COMMIT_SHORT_SHA"
+  - git push
   - docker pull $CI_REGISTRY_IMAGE:latest || true
   - docker build . -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE:latest --cache-from $CI_REGISTRY_IMAGE:latest
   - docker run $CI_REGISTRY_IMAGE:latest sed "s/latest_version/$CI_COMMIT_SHORT_SHA/" flatata-deployment.yaml
